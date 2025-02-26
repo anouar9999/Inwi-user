@@ -39,6 +39,7 @@ export const TournamentProvider = ({ children }) => {
       const data = await response.json();
       
       if (data.success) {
+        console.log('checkJoinStatus')
         console.log(data)
         setHasJoined(data.has_joined);
         setTournament(prev => ({

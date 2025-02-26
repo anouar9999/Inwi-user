@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { CircleUserRound, Gamepad2, Plus, Shapes, ChevronDown, AlertCircle } from 'lucide-react';
+import { CircleUserRound, Gamepad2, Plus, Shapes, ChevronDown, AlertCircle, Trophy, Monitor, Users, DollarSign } from 'lucide-react';
 import PrizeList from '@/app/(DashboardLayout)/PrizeList';
 import ParticipantCardGrid from '@/app/(DashboardLayout)/components/widgets/cards/ParticipantCard';
 import { toast, ToastContainer } from 'react-toastify';
@@ -43,36 +43,49 @@ const TabComponent = ({ activeTab, onTabChange, tournament }) => {
         </div>
       );
     }
-
+    const InfoCard = ({ icon, value, label }) => (
+      <div className="space-y-1">
+        <div className="flex items-center  gap-1 md:gap-2">
+          <div className=" bg-black/15 p-2 rounded-full ">
+             {icon}
+          </div>
+         
+          <span className="text-sm md:text-xl font-valorant">{value}</span>
+        </div>
+        <p className="text-xs font-pilot md:text-sm text-gray-400">{label}</p>
+      </div>
+    );
     switch (activeTab) {
       case 'Overview':
         return (
           <div className="space-y-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              <SquadFormatCard
-                icon={<Gamepad2 />}
-                title={tournament.type_de_match}
-                subTitle="Format of game"
-              />
-              <SquadFormatCard
-                icon={<Shapes />}
-                title={tournament.type_de_jeu}
-                subTitle="Platform Played"
-              />
-              <SquadFormatCard
-                icon={<CircleUserRound />}
-                title={tournament.nombre_maximum}
-                subTitle="Number of Players"
-              />
-              {/* <SquadFormatCard
-                icon={
-                  tournament.competition_type === 'Valorant'
-                    ? 'https://freebiehive.com/wp-content/uploads/2024/02/Valorant-Logo-PNG.jpg'
-                    : 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg6_3faaiwykPBNbY9_8LSxvZfyFSK_wobcNqs9WhqNjJWBRPjdwUXoNojqgsmuzZ__LcTGQfpct6VMWkILsNGlCBHKb46jJ3tFg-7DmULovwGBTnMH3E3KsoLj2uO7EAef4hVH3yJMYpU/s0/Free+Fire+Logo+-+Download+Free+Vector+PNG.png'
-                }
-                subTitle="Game"
-              /> */}
-            </div>
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+                  <InfoCard
+                    icon={<DollarSign className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+                    value={`${tournament.prize_pool} DH`}
+                    label="Prize Pool"
+                  />
+                  <InfoCard
+                    icon={<Gamepad2 className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+                    value={tournament.type_de_match}
+                    label="Format"
+                  />
+                  <InfoCard
+                    icon={<Users className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+                    value={tournament.nombre_maximum}
+                    label="Players"
+                  />
+                  <InfoCard
+                    icon={<Monitor className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+                    value={tournament.type_de_jeu}
+                    label="Platform"
+                  />
+                  <InfoCard
+                    icon={<Trophy className="w-4 h-4 md:w-5 md:h-5 text-primary" />}
+                    value={tournament.format_des_qualifications}
+                    label="Type"
+                  />
+                </div>
             <div>
               <h3 className="text-lg font-valorant mb-4 flex items-center text-white">
                 <AlertCircle className="w-5 h-5 mr-2 text-primary" />

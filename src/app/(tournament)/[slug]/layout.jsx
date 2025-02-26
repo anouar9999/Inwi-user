@@ -155,91 +155,106 @@ const LayoutContent = ({ children }) => {
   };
 
   // Status Badge Component
-  const renderStatusBadge = () => {
-    if (!hasJoined) return null;
+ // Status Badge Component
+const renderStatusBadge = () => {
+  if (!hasJoined || !registrationStatus) {
+    return null;
+  }
 
-    const statusConfig = {
-      pending: {
-        icon: Clock,
-        bgColor: 'bg-yellow-500',
-        textColor: 'text-yellow-500',
-        borderColor: 'border-yellow-500',
-        label: 'Under Review',
-        animation: 'animate-pulse',
-      },
-      accepted: {
-        icon: Check,
-        bgColor: 'bg-green-500',
-        textColor: 'text-green-500',
-        borderColor: 'border-green-500',
-        label: 'Accepted',
-      },
-      rejected: {
-        icon: X,
-        bgColor: 'bg-red-500',
-        textColor: 'text-red-500',
-        borderColor: 'border-red-500',
-        label: 'Rejected',
-      },
-    };
+  // Handle various status formats that might come from the backend
+  const normalizedStatus = registrationStatus.toString().toLowerCase().trim();
+  
+  const statusConfig = {
+    'pending': {
+      icon: Clock,
+      bgColor: 'bg-yellow-500',
+      textColor: 'text-yellow-500',
+      borderColor: 'border-yellow-500',
+      label: 'Under Review',
+      animation: 'animate-pulse',
+    },
+    'approved': {
+      icon: Check,
+      bgColor: 'bg-green-500',
+      textColor: 'text-green-500',
+      borderColor: 'border-green-500',
+      label: 'Accepted',
+    },
+    'accepted': {
+      icon: Check,
+      bgColor: 'bg-green-500',
+      textColor: 'text-green-500',
+      borderColor: 'border-green-500',
+      label: 'Accepted',
+    },
+    'rejected': {
+      icon: X,
+      bgColor: 'bg-red-500',
+      textColor: 'text-red-500',
+      borderColor: 'border-red-500',
+      label: 'Rejected',
+    }
+  };
 
-    const status = registrationStatus || 'pending';
-    const config = statusConfig[status];
-    if (!config) return null;
+  // Get config based on normalized status
+  const config = statusConfig[normalizedStatus];
+  
+  // If no matching status is found, fall back to pending
+  if (!config) {
+    console.warn(`Unknown status: ${registrationStatus}, falling back to pending`);
+    return null;
+  }
 
-    const StatusIcon = config.icon;
+  const StatusIcon = config.icon;
 
-    return (
-      <div
-        className={`relative group cursor-pointer px-12 py-3 rounded-xl ${config.textColor} 
-        transition-all duration-300 hover:border-opacity-50 backdrop-blur-sm z-[9999999999]`}
-      >
-        <div className="flex items-center space-x-4">
-          <div className={`p-2 rounded-lg ${config.bgColor}/10 ${config.animation || ''}`}>
-            <StatusIcon className="w-6 h-6" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-custom text-3xl">Registration {config.label}</span>
-            {teamName && (
-              <span className="text-sm text-gray-400">
-                With Team: <span className="uppercase font-pilot">{teamName}</span>
-              </span>
-            )}
-          </div>
+  return (
+    <div className="relative group cursor-pointer px-12 py-3 rounded-xl bg-gray-800/50">
+      <div className="flex items-center space-x-4">
+        <div className={`p-2 rounded-lg ${config.bgColor}/10 ${config.animation || ''}`}>
+          <StatusIcon className={`w-6 h-6 ${config.textColor}`} />
         </div>
-
-        <div
-          className={`absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full
-          w-72 p-4 rounded-lg bg-gray-900 border border-gray-700
-          opacity-0 invisible group-hover:opacity-100 group-hover:visible
-          transition-all duration-300 transform group-hover:-translate-y-full z-50`}
-        >
-          <div className="relative">
-            <div className="flex items-start space-x-3">
-              <div className={`p-2 rounded-lg ${config.bgColor}/10 shrink-0`}>
-                <StatusIcon className="w-5 h-5" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Registration {config.label}</h4>
-                <p className="text-sm text-gray-400">
-                  {status === 'pending' &&
-                    "Your registration is being reviewed by our team. We'll notify you once a decision is made."}
-                  {status === 'accepted' &&
-                    "Congratulations! You're officially registered for this tournament."}
-                  {status === 'rejected' &&
-                    'Unfortunately, your registration was not accepted. You may try again for future tournaments.'}
-                </p>
-              </div>
-            </div>
-            <div
-              className="absolute -bottom-6 left-1/2 -translate-x-1/2 
-              border-8 border-transparent border-t-gray-900"
-            ></div>
-          </div>
+        <div className="flex flex-col">
+          <span className={`font-custom text-3xl ${config.textColor}`}>
+            Registration {config.label}
+          </span>
+          {teamName && (
+            <span className="text-sm text-gray-400">
+              With Team: <span className="uppercase font-pilot">{teamName}</span>
+            </span>
+          )}
         </div>
       </div>
-    );
-  };
+
+      <div className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full
+        w-72 p-4 rounded-lg bg-gray-900 border border-gray-700
+        opacity-0 invisible group-hover:opacity-100 group-hover:visible
+        transition-all duration-300 transform group-hover:-translate-y-full z-50">
+        <div className="relative">
+          <div className="flex items-start space-x-3">
+            <div className={`p-2 rounded-lg ${config.bgColor}/10 shrink-0`}>
+              <StatusIcon className={`w-5 h-5 ${config.textColor}`} />
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-1">
+                Registration {config.label}
+              </h4>
+              <p className="text-sm text-gray-400">
+                {normalizedStatus === 'pending' &&
+                  "Your registration is being reviewed by our team. We'll notify you once a decision is made."}
+                {(normalizedStatus === 'accepted' || normalizedStatus === 'approved') &&
+                  "Congratulations! You're officially registered for this tournament."}
+                {normalizedStatus === 'rejected' &&
+                  'Unfortunately, your registration was not accepted. You may try again for future tournaments.'}
+              </p>
+            </div>
+          </div>
+          <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 
+            border-8 border-transparent border-t-gray-900"></div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
   // Join Button Component
   const renderJoinButton = () => {
@@ -287,13 +302,13 @@ const LayoutContent = ({ children }) => {
           textColor: 'text-blue-400',
           label: 'Tournament in Progress',
         },
-        Terminé: {
+        'Terminé': {
           icon: Trophy,
           bgColor: 'bg-gray-500',
           textColor: 'text-gray-400',
           label: 'Tournament Ended',
         },
-        Annulé: {
+        'Annulé': {
           icon: AlertCircle,
           bgColor: 'bg-red-500',
           textColor: 'text-red-400',
@@ -327,7 +342,7 @@ const LayoutContent = ({ children }) => {
     }
 
     return renderTournamentStatus();
-  };
+  };  
 
   // Tournament Stats Component
   const renderTournamentStats = () => {
@@ -391,7 +406,7 @@ const LayoutContent = ({ children }) => {
       </div>
     );
   };
-
+console.log('tournament',tournament)
   return (
     <>
       {isJoining && <LoadingPage />}

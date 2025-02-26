@@ -24,13 +24,13 @@ export default function Loading() {
       
     <div className="flex flex-col  justify-center items-center h-screen">
     <Image
-      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+      src="https://moroccogamingexpo.ma/wp-content/uploads/2024/02/Logo-MGE-2025-white.svg"
       alt="Brand Logo"
       width={350}
       height={100}
       className="cut-corners"
     />
-<div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-purple-500">
+<div className="animate-spin rounded-full h-24 w-24 border-t-2 border-b-2 border-primary">
 
     </div>
   

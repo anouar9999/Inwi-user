@@ -17,10 +17,10 @@ const Profile = () => {
     bio: '',
     avatar: '',
     user_type: '',
-    tournaments: {
-      asPlayer: 254,
-      asTeam: 187,
-      total: 441
+    tournament_stats: {
+      individual_participations: 0,
+      team_participations: 0,
+      total_participations: 0
     },
   
   });
@@ -101,8 +101,8 @@ const Profile = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 w-full sm:w-auto">
               {[
-                { count: user.tournaments.asPlayer, type: 'Player', Icon: User, color: 'from-blue-400 to-blue-600' },
-                { count: user.tournaments.asTeam, type: 'Team', Icon: Users, color: 'from-purple-400 to-purple-600' }
+                { count: user.tournament_stats.individual_participations, type: 'Player', Icon: User, color: 'from-blue-400 to-blue-600' },
+                { count: user.tournament_stats.team_participations, type: 'Team', Icon: Users, color: 'from-purple-400 to-purple-600' }
               ].map(({ count, type, Icon, color }) => (
                 <div key={type} className="text-center bg-gray-800/30 p-4 sm:p-6 rounded-xl hover:bg-gray-800/50 transition-all flex-1 sm:flex-none">
                   <div className={`text-3xl sm:text-5xl font-custom bg-gradient-to-r ${color} text-transparent bg-clip-text`}>
@@ -135,7 +135,7 @@ const Profile = () => {
           />
           <StatCard 
             title="Tournament Activity" 
-            value={10}
+            value={user.tournament_stats.total_participations}
             icon={Trophy}
             color="text-green-500"
           />

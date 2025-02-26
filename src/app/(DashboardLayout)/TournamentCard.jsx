@@ -14,7 +14,8 @@ const TournamentCard = ({
   spots_remaining,
   registered_count,
   maxParticipants,
-  tournamentType
+  tournamentType,
+tournament
 }) => {
   const formatDate = (date) => {
     const dateObj = new Date(date);
@@ -25,7 +26,6 @@ const TournamentCard = ({
     const minute = dateObj.getMinutes().toString().padStart(2, '0');
     return `${month}.${day}.${year} - ${hour}:${minute} PM`;
   };
-
   const getStatusBadge = () => {
     if (registered_count >= maxParticipants) {
       return { text: "FULL", color: "bg-red-500" };
@@ -43,6 +43,7 @@ const TournamentCard = ({
   };
 
   const status = getStatusBadge();
+  console.log(tournament)
 
   return (
     <Link href={`/${slug}`} className="block w-full font-pilot">

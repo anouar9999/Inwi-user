@@ -134,27 +134,11 @@ const ParticipantCardGrid = ({ tournamentId }) => {
       <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 
         gap-2 xs:gap-3 sm:gap-4">
         {participants.map((item) => (
-        <>
-          <ParticipantOrTeamCard 
-            key={`participant-${item.registration_id}`} 
-            item={item}
-          />  <ParticipantOrTeamCard 
-          key={`participant-${item.registration_id}`} 
-          item={item}
-        />  <ParticipantOrTeamCard 
+        <ParticipantOrTeamCard 
         key={`participant-${item.registration_id}`} 
         item={item}
-      />  <ParticipantOrTeamCard 
-      key={`participant-${item.registration_id}`} 
-      item={item}
-    />  <ParticipantOrTeamCard 
-    key={`participant-${item.registration_id}`} 
-    item={item}
-  />  <ParticipantOrTeamCard 
-  key={`participant-${item.registration_id}`} 
-  item={item}
-/>
-        </>
+      />
+        
         ))}
       </div>
     </div>

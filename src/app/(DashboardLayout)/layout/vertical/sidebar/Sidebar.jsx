@@ -7,10 +7,9 @@ import { Settings, Home, Users, ChevronRight, Gamepad2, X, Gamepad, Users2 } fro
 import CustomButton from '@/app/(DashboardLayout)/CustomButton';
 import Profile from '@/app/(DashboardLayout)/dashboards/settings/page';
 import ProfileDropdown from '../header/Profile';
-
+import Image from 'next/image';
 
 const menuItems = [
-  
   { id: 1, icon: Gamepad2, name: 'Tournaments', href: '/dashboards/tournaments' },
   { id: 2, icon: Gamepad, name: 'My Tournament', href: '/dashboards/my-tournaments' },
   { id: 3, icon: Users2, name: 'teams', href: '/dashboards/teams' },
@@ -48,7 +47,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
       {/* Mobile Overlay */}
       {isMobile && isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-secondary  z-40 md:hidden"
           onClick={() => setIsMobileOpen(false)}
         ></div>
       )}
@@ -58,25 +57,34 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
         className={`fixed left-0 top-0 h-full ${
           isOpen ? 'w-full md:w-64' : 'w-16'
         } md:left-5 md:top-24 md:h-[calc(100vh-96px)]    flex flex-col items-center py-6 rounded-none md:rounded-2xl  transition-all duration-300 z-50 ${
-          isMobile && !isMobileOpen ? '-translate-x-full' : 'translate-x-0'
+          isMobile && !isMobileOpen ? '-translate-x-full' : 'translate-x-0  z-[999999]'
         }`}
       >
-        
         {/* Close button for mobile */}
         {isMobile && isMobileOpen && (
           <>
-         
-         <button
-            onClick={() => setIsMobileOpen(false)}
-            className="absolute top-4 right-4 p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
-          >
-            <X className="w-6 h-6 text-white" />
-          </button>
+            <div className={`absolute top-4 left-4 p-2  w-28 h-12 md:w-32 md:h-20 `}>
+              <Link href={'/'}>
+                <Image
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+                  alt="Logo"
+                  layout="fill"
+                  objectFit="contain"
+                  priority
+                />
+              </Link>
+            </div>
+            <button
+              onClick={() => setIsMobileOpen(false)}
+              className="absolute top-4 right-4 p-2 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors duration-200"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
           </>
         )}
 
         {/* Menu items container with added top padding */}
-        <div className="flex flex-col items-start space-y-6 mb-auto w-full px-3 pt-12">
+        <div className="flex flex-col items-start space-y-6 mb-auto w-full px-3 pt-12 ">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -88,7 +96,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                 onClick={() => isMobile && setIsMobileOpen(false)}
               >
                 <div
-                  className={`relative flex items-center justify-start w-full h-10 rounded-xl transition-all duration-300 ${
+                  className={`relative flex items-center justify-start w-full h-10 rounded-xl  transition-all duration-300 ${
                     isActive ? 'bg-primary  shadow-md' : 'hover:bg-gray-800'
                   }`}
                 >
@@ -102,7 +110,7 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
                     </span>
                   )}
                   {isActive && (
-                    <div className="absolute right-0 w-1.5 h-5 bg-[#ae2050] rounded-l-full"></div>
+                    <div className="absolute right-0 w-1.5 h-5 bg-primary rounded-l-full"></div>
                   )}
                 </div>
               </Link>
@@ -110,7 +118,6 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
           })}
 
           {/* New Tournament Button (visible only when open) */}
-         
         </div>
 
         {/* Profile (visible only when open) */}

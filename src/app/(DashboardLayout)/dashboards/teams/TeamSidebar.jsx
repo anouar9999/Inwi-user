@@ -573,106 +573,110 @@ const TeamSidebar = ({ isOpen, onClose, team, onTeamUpdate  }) => {
                   </div>
                 )}
 <div className="grid grid-cols-1 gap-4">
-                {activeTab === 'requests' && (
-                  <div className="space-y-6">
-                    {/* Header with Stats */}
-                    <div className="flex flex-col md:flex-row md:items-center gap-4">
+{activeTab === 'requests' && (
+  <div className="space-y-4 md:space-y-6">
+    {/* Header with Stats */}
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="bg-secondary/40 backdrop-blur-sm p-4 md:p-6 rounded-xl border border-gray-700/30">
+        <div className="flex items-center gap-3 text-primary/90">
+          <UserPlus className="w-5 h-5 md:w-6 md:h-6" />
+          <div>
+            <h3 className="text-sm font-medium text-gray-400">Pending Requests</h3>
+            <p className="text-xl md:text-2xl font-bold text-white">{requests.length}</p>
+          </div>
+        </div>
+      </div>
 
-                      <div className="bg-secondary/40 backdrop-blur-sm p-6 rounded-xl border border-gray-700/30">
-                        <div className="flex items-center gap-3 text-primary/90">
-                          <UserPlus size={24} />
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-400">Pending Requests</h3>
-                            <p className="text-2xl font-bold text-white">{requests.length}</p>
-                          </div>
-                        </div>
-                      </div>
+      <div className="bg-secondary/40 backdrop-blur-sm p-4 md:p-6 rounded-xl border border-gray-700/30">
+        <div className="flex items-center gap-3 text-emerald-500">
+          <Check className="w-5 h-5 md:w-6 md:h-6" />
+          <div>
+            <h3 className="text-sm font-medium text-gray-400">Accepted Today</h3>
+            <p className="text-xl md:text-2xl font-bold text-white">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
 
-                      <div className="bg-secondary/40 backdrop-blur-sm p-6 rounded-xl border border-gray-700/30">
-                        <div className="flex items-center gap-3 text-emerald-500">
-                          <Check size={24} />
-                          <div>
-                            <h3 className="text-sm font-medium text-gray-400">Accepted Today</h3>
-                            <p className="text-2xl font-bold text-white">0</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+    {/* Requests List */}
+    <div className="flex flex-col gap-4">
+      {requests.map((request) => (
+        <div
+          key={request.id}
+          className="bg-secondary/40 hover:bg-secondary/60 backdrop-blur-sm p-4 md:p-6 rounded-xl border border-gray-700/30 transition-all"
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              {/* Avatar */}
+              <div className="w-14 h-14 md:w-16 md:h-16 flex-shrink-0 rounded-xl overflow-hidden ring-2 ring-primary/20">
+                <img
+                  src={
+                    request.avatar
+                      ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${request.avatar}`
+                      : `data:image/svg+xml,${encodeURIComponent(defaultAvatarSvg)}`
+                  }
+                  alt={request.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
-                    {/* Requests List */}
-                            <div className="flex items-center gap-3 md:flex-shrink-0">
-                      {requests.map((request) => (
-                        <div
-                          key={request.id}
-                          className="bg-secondary/40 hover:bg-secondary/60 backdrop-blur-sm p-6 rounded-xl border border-gray-700/30 transition-all"
-                        >
-                          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex items-center gap-4">
-                              <div className="w-16 h-16 rounded-xl overflow-hidden ring-2 ring-primary/20">
-                                <img
-                                  src={
-                                    request.avatar
-                                      ? `${process.env.NEXT_PUBLIC_BACKEND_URL}${request.avatar}`
-                                      : `data:image/svg+xml,${encodeURIComponent(defaultAvatarSvg)}`
-                                  }
-                                  alt={request.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              </div>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3">
-                                  <h4 className="text-lg font-semibold text-white">
-                                    {request.name}
-                                  </h4>
-                                  <span className="px-3 py-1 bg-primary/10 text-xs font-medium text-primary/90 rounded-full">
-                                    New Request
-                                  </span>
-                                </div>
-                                <p className="text-gray-400 mt-1">{request.message}</p>
-                                <div className="flex gap-3 mt-2">
-                                  <span className="px-3 py-1.5 bg-gray-700/50 text-xs font-medium text-gray-300 rounded-lg">
-                                    {request.rank || 'Unranked'}
-                                  </span>
-                                  <span className="px-3 py-1.5 bg-gray-700/50 text-xs font-medium text-gray-300 rounded-lg">
-                                    {request.region || 'Region Unknown'}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-3 md:flex-shrink-0">
-                              <button
-                                onClick={() => handleRequestAction(request.id, 'reject')}
-                                className="px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all hover:scale-105 flex gap-2 items-center"
-                              >
-                                <X size={18} />
-                                <span>Decline</span>
-                              </button>
-                              <button
-                                onClick={() => handleRequestAction(request.id, 'accept')}
-                                className="px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all hover:scale-105 flex gap-2 items-center"
-                              >
-                                <Check size={18} />
-                                <span>Accept</span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+              {/* User Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                  <h4 className="text-base md:text-lg font-semibold text-white">
+                    {request.name}
+                  </h4>
+                  <span className="px-2 md:px-3 py-1 bg-primary/10 text-xs font-medium text-primary/90 rounded-full">
+                    New Request
+                  </span>
+                </div>
+                <p className="text-gray-400 mt-1 text-sm md:text-base line-clamp-2">{request.message}</p>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <span className="px-2 md:px-3 py-1 md:py-1.5 bg-gray-700/50 text-xs font-medium text-gray-300 rounded-lg">
+                    {request.rank || 'Unranked'}
+                  </span>
+                  <span className="px-2 md:px-3 py-1 md:py-1.5 bg-gray-700/50 text-xs font-medium text-gray-300 rounded-lg">
+                    {request.region || 'Region Unknown'}
+                  </span>
+                </div>
+              </div>
 
-                      {requests.length === 0 && (
-                        <div className="flex flex-col items-center justify-center py-16 px-4 bg-secondary/20 backdrop-blur-sm rounded-xl border border-gray-700/30">
-                          <UserPlus size={48} className="text-gray-500 mb-4" />
-                          <h3 className="text-xl font-semibold text-white mb-2">
-                            No Pending Requests
-                          </h3>
-                          <p className="text-gray-400 text-center max-w-md">
-                            When players request to join your team, they ll appear here for review.
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
+              {/* Action Buttons */}
+              <div className="flex gap-2 md:gap-3 w-full sm:w-auto mt-3 sm:mt-0">
+                <button
+                  onClick={() => handleRequestAction(request.id, 'reject')}
+                  className="flex-1 sm:flex-initial px-3 md:px-4 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <X className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-sm md:text-base">Decline</span>
+                </button>
+                <button
+                  onClick={() => handleRequestAction(request.id, 'accept')}
+                  className="flex-1 sm:flex-initial px-3 md:px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
+                >
+                  <Check className="w-4 h-4 md:w-5 md:h-5" />
+                  <span className="text-sm md:text-base">Accept</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {requests.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-12 md:py-16 px-4 bg-secondary/20 backdrop-blur-sm rounded-xl border border-gray-700/30">
+          <UserPlus className="w-10 h-10 md:w-12 md:h-12 text-gray-500 mb-4" />
+          <h3 className="text-lg md:text-xl font-semibold text-white mb-2">
+            No Pending Requests
+          </h3>
+          <p className="text-sm md:text-base text-gray-400 text-center max-w-md">
+            When players request to join your team, they will appear here for review.
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+)}
 </div>
                 {activeTab === 'settings' && (
                 <div className="space-y-4 md:space-y-6">

@@ -52,36 +52,7 @@ export default function AuthForm() {
     bio: Yup.string().max(500, 'Too long'),
   });
 
-  const handleFileChange = (event, setFieldValue) => {
-    const file = event.currentTarget.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setServerMessage({
-          type: 'error',
-          message: 'File size should be less than 5MB',
-        });
-        return;
-      }
-
-      const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-      if (!validTypes.includes(file.type)) {
-        setServerMessage({
-          type: 'error',
-          message: 'Please upload a valid image file (JPG, PNG, or GIF)',
-        });
-        return;
-      }
-
-      setFieldValue('avatar', file);
-
-      // Create preview URL
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+ 
   const initialValues = isLogin
     ? { email: '', password: '' }
     : {
@@ -112,109 +83,172 @@ export default function AuthForm() {
 
   const inputWithIconClasses = ` ${inputClasses}`;
 
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setIsLoading(true);
-    setServerMessage({ type: '', message: '' });
+ // Updated handleSubmit function
+ const handleSubmit = async (values, { setSubmitting }) => {
+  setIsLoading(true);
+  setServerMessage({ type: '', message: '' });
 
-    try {
-      const url = isLogin
-        ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user_login.php`
-        : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user_register.php`;
+  try {
+    const url = isLogin
+      ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user_login.php`
+      : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user_register.php`;
 
-      let response;
+    let response;
 
-      if (isLogin) {
-        // Handle login - simple JSON submission
-        response = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: values.email,
-            password: values.password,
-          }),
-        });
-      } else {
-        // Handle registration with file upload
-        const formData = new FormData();
+    if (isLogin) {
+      // Login request handling
+      const loginData = {
+        email: values.email,
+        password: values.password
+      };
 
-        // Add all fields except avatar and confirmPassword
-        Object.keys(values).forEach((key) => {
-          if (key !== 'avatar' && key !== 'confirmPassword') {
-            formData.append(key, values[key]);
-          }
-        });
+      console.log('Sending login data:', loginData);
 
-        // Add avatar file if exists
-        if (values.avatar) {
-          formData.append('avatar', values.avatar);
-        }
+      response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(loginData)
+      });
 
-        // Add additional metadata
-        formData.append('created_at', new Date().toISOString());
-        formData.append('is_verified', 1);
+      const responseText = await response.text();
+      console.log('Raw login response:', responseText);
 
-        response = await fetch(url, {
-          method: 'POST',
-          body: formData,
-        });
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse login response:', e);
+        throw new Error('Invalid server response format');
       }
 
-      const data = await response.json();
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      // Store user session data
+      localStorage.setItem('userSessionToken', data.session_token);
+      localStorage.setItem('userId', data.user_id);
+      localStorage.setItem('username', data.username);
+      localStorage.setItem('userType', data.user_type);
+      localStorage.setItem('avatarUrl', data.avatar);
+
+      setServerMessage({
+        type: 'success',
+        message: `Welcome back, ${data.username}! Redirecting to dashboard...`,
+      });
+
+      setTimeout(() => {
+        router.push('/dashboards/my-tournaments');
+      }, 1500);
+
+    } else {
+      // Registration request handling
+      const formData = new FormData();
+      
+      // Basic user data
+      formData.append('username', values.username);
+      formData.append('email', values.email);
+      formData.append('password', values.password);
+      formData.append('bio', values.bio || '');
+      formData.append('is_verified', '1');
+
+      // Handle avatar file
+      if (values.avatar && values.avatar instanceof File) {
+        formData.append('avatar', values.avatar, values.avatar.name);
+      }
+
+      console.log('Sending registration data:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value instanceof File ? `File: ${value.name}` : value}`);
+      }
+
+      response = await fetch(url, {
+        method: 'POST',
+        body: formData
+      });
+
+      const responseText = await response.text();
+      console.log('Raw registration response:', responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse registration response:', e);
+        throw new Error('Invalid server response format');
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        console.error('Server error details:', data);
+        throw new Error(data.message || `Server error: ${response.status}`);
       }
 
       if (data.success) {
-        if (isLogin) {
-          // Store user session data
-          console.log(data);
-          localStorage.setItem('userSessionToken', data.session_token);
-          localStorage.setItem('userId', data.user_id);
-          localStorage.setItem('username', data.username);
-          localStorage.setItem('userType', data.user_type);
-          localStorage.setItem('avatarUrl', data.avatar);
-
-          // Show success message with username
-          setServerMessage({
-            type: 'success',
-            message: `Welcome back, ${data.username}! Redirecting to dashboard...`,
-          });
-
-          // Delayed redirect for better UX
-          setTimeout(() => {
-            router.push('/dashboards/my-tournaments');
-          }, 1500);
-        } else {
-          // Registration success
-          setServerMessage({
-            type: 'success',
-            message: 'Account created successfully! You can now log in.',
-          });
-
-          // Delayed switch to login form
-          setTimeout(() => {
-            setIsLogin(true);
-          }, 2000);
-        }
-      } else {
-        // Handle API-level failures
         setServerMessage({
-          type: 'error',
-          message: data.message || (isLogin ? 'Login failed' : 'Registration failed'),
+          type: 'success',
+          message: 'Account created successfully! You can now log in.',
         });
+
+        setTimeout(() => {
+          setIsLogin(true);
+        }, 2000);
+      } else {
+        throw new Error(data.message || 'Registration failed');
       }
-    } catch (error) {
-      // Handle network or other errors
+    }
+  } catch (error) {
+    console.error('Error details:', error);
+    setServerMessage({
+      type: 'error',
+      message: error.message || 'An error occurred. Please try again.',
+    });
+  } finally {
+    setIsLoading(false);
+    setSubmitting(false);
+  }
+};
+// Updated handleFileChange function
+const handleFileChange = (event, setFieldValue) => {
+  const file = event.currentTarget.files[0];
+  if (file) {
+    // File size validation (5MB)
+    if (file.size > 5 * 1024 * 1024) {
       setServerMessage({
         type: 'error',
-        message: error.message || 'An error occurred. Please try again.',
+        message: 'File size should be less than 5MB',
       });
-    } finally {
-      setIsLoading(false);
-      setSubmitting(false);
+      return;
     }
-  };
+
+    // File type validation
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      setServerMessage({
+        type: 'error',
+        message: 'Please upload a valid image file (JPG, PNG, or GIF)',
+      });
+      return;
+    }
+
+    console.log('Selected file:', {
+      name: file.name,
+      type: file.type,
+      size: file.size
+    });
+
+    // Set file in form values
+    setFieldValue('avatar', file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  }
+};
 
   // Message component for better organization
 
@@ -248,7 +282,7 @@ export default function AuthForm() {
         <div className="space-y-4 max-w-xl">
           <div className="mb-6 w-56">
             <Image
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+              src="https://moroccogamingexpo.ma/wp-content/uploads/2024/02/Logo-MGE-2025-white.svg"
               alt="Travelzo"
               width={220}
               height={40}
@@ -279,7 +313,7 @@ export default function AuthForm() {
         {/* Logo container - centered on mobile */}
         <div className="md:hidden w-48 mb-12">
           <Image
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+            src="https://moroccogamingexpo.ma/wp-content/uploads/2024/02/Logo-MGE-2025-white.svg"
             alt="Travelzo"
             width={220}
             height={40}
@@ -366,45 +400,40 @@ export default function AuthForm() {
             />
           </div>
         )} */}
-    <div className="lg:col-span-2 space-y-4">
-      <div className="flex flex-col sm:flex-row items-center gap-6">
-     
-        
-        {/* File Input */}
-        <div className="relative flex-grow w-full">
-          <label
-            className={`
-              absolute 
-              transition-all 
-              text-[12pt] 
-              font-custom 
-              leading-tight 
-              tracking-widest 
-              duration-200 
-              pointer-events-none 
-              -translate-y-9 
-              top-5 
-              left-4 
-              text-xs 
-              rounded-md 
-              text-gray-400 
-              bg-gray-800 
-              px-2
-            `}
-          >
-            Profile Picture
-          </label>
-          <input
-            type="file"
-            onChange={(event) => handleFileChange(event, setFieldValue)}
-            accept="image/jpeg,image/png,image/gif"
-            className={`${inputWithIconClasses} file:mr-4 file:py-2 file:px-4 
-              file:rounded-full file:border-0 file:text-sm file:bg-gray-700 
-              file:text-gray-300 hover:file:bg-gray-600 cursor-pointer`}
-          />
-        </div>
+   <div className="lg:col-span-2 space-y-4">
+  <div className="flex flex-col sm:flex-row items-center gap-6">
+    {/* Avatar Preview */}
+    {avatarPreview && (
+      <div className="shrink-0">
+        <Image
+          src={avatarPreview}
+          alt="Avatar preview"
+          width={60}
+          height={60}
+          className="rounded-full object-cover ring-2 ring-gray-700/50"
+        />
       </div>
+    )}
+    
+    {/* File Input */}
+    <div className="relative flex-grow w-full">
+      <label
+        className="absolute transition-all text-[12pt] font-custom leading-tight tracking-widest duration-200 pointer-events-none -translate-y-9 top-5 left-4 text-xs rounded-md text-gray-400 bg-gray-800 px-2"
+      >
+        Profile Picture
+      </label>
+      <input
+        type="file"
+        name="avatar"
+        onChange={(event) => handleFileChange(event, setFieldValue)}
+        accept="image/jpeg,image/png,image/gif"
+        className={`${inputWithIconClasses} file:mr-4 file:py-2 file:px-4 
+          file:rounded-full file:border-0 file:text-sm file:bg-gray-700 
+          file:text-gray-300 hover:file:bg-gray-600 cursor-pointer`}
+      />
     </div>
+  </div>
+</div>
 
     {/* Form Fields */}
     <div className="space-y-6 lg:space-y-0">

@@ -92,7 +92,7 @@ export default function RootLayout({ children }) {
                     }}
                   >
                     <Image
-                      src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+                      src="https://moroccogamingexpo.ma/wp-content/uploads/2024/02/Logo-MGE-2025-white.svg"
                       alt="Brand Logo"
                       width={350}
                       height={100}
@@ -100,7 +100,7 @@ export default function RootLayout({ children }) {
                     />
                   </motion.div>
                   <motion.div
-                    className="rounded-full h-24 w-24 border-t-2 border-b-2 border-purple-500"
+                    className="rounded-full h-24 w-24 border-t-2 border-b-2 border-primary"
                     animate={{ rotate: 360 }}
                     transition={{
                       duration: 1.5,

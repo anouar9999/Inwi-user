@@ -75,7 +75,7 @@ const ProfileDropdown = () => {
     >
       <div className="relative w-9 h-9 rounded-full overflow-hidden 
                     flex items-center justify-center flex-shrink-0
-                    ring-2 ring-gray-700 ring-offset-2 ring-offset-gray-900">
+                   ">
         {avatarUrl ? (
           <img
             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${avatarUrl}`}

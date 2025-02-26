@@ -28,11 +28,11 @@ const Header = ({ setIsMobileOpen }) => {
   };
 
   return (
-    <header className="absolute top-0 left-0 right-0 w-full h-16 md:h-20 bg-gradient-to-b from-black to-transparent   flex items-center justify-between px-4 md:px-12 z-50">
+    <header className="absolute top-0 left-0 right-0 w-full h-16 md:h-20 bg-gradient-to-b from-black to-transparent   flex items-center justify-between px-4 md:px-12 z-10">
       <div className={`relative ${isMobile ? 'mx-auto' : ''} w-28 h-12 md:w-32 md:h-20 `}>
         <Link href={'/'} >
         <Image
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Logo_inwi.svg/2560px-Logo_inwi.svg.png"
+          src="https://moroccogamingexpo.ma/wp-content/uploads/2024/02/Logo-MGE-2025-white.svg"
           alt="Logo"
           layout="fill"
           objectFit="contain"

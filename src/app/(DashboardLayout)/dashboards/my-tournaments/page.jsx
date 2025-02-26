@@ -80,8 +80,9 @@ const ParticipantTournaments = ({ participantId }) => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-2">
           {tournaments.map((tournament) => (
-            <>
+         
               <TournamentCard
+              tournament={tournament}
                 key={tournament.id}
                 id={tournament.id}
                 name={tournament.nom_des_qualifications}
@@ -99,9 +100,9 @@ const ParticipantTournaments = ({ participantId }) => {
                 spots_remaining= {tournament.spots_remaining}
                 tournamentType={tournament.participation_type}
                 registered_count={tournament.registered_count}
-              />{' '}
+              />
             
-            </>
+           
           ))}
         </div>
       )}

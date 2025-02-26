@@ -6,6 +6,8 @@ import TeamSidebar from './TeamSidebar';
 import CreateTeamForm from './CreateTeamForm';
 import NonOwnerView from './NonOwnerView';
 import { ToastProvider, addToast, useToast } from '@/app/components/toast/ToastProviderContext';
+import TeamCard from './TeamCard';
+import AddTeamCard from './AddTeamCard';
 
 // Constants
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -87,58 +89,32 @@ const useTeamsData = (userId) => {
   return { ...teamsData, refreshTeams: fetchTeams };
 };
 // Components
-const TeamCard = ({ team, onClick }) => (
-  <div
-    className="bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer 
-               transition-all duration-300 hover:-translate-y-1 h-full"
-    onClick={() => onClick(team)}
-  >
-    <div className="relative aspect-video">
-      {team.image ? (
-        <img
-          className="w-full h-full object-cover"
-          src={`${BACKEND_URL}/${team.image}`}
-          alt={`${team.name} logo`}
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-700">
-          <UserCircle className="w-16 h-16 sm:w-20 sm:h-20 text-gray-500" />
-        </div>
-      )}
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
-        <h5 className="text-lg sm:text-xl font-semibold text-white truncate">{team.name}</h5>
-      </div>
-    </div>
-  </div>
-);
+// const TeamCard = ({ team, onClick }) => (
+//   <div
+//     className="bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer 
+//                transition-all duration-300 hover:-translate-y-1 h-full"
+//     onClick={() => onClick(team)}
+//   >
+//     <div className="relative aspect-video">
+//       {team.image ? (
+//         <img
+//           className="w-full h-full object-cover"
+//           src={`${BACKEND_URL}/${team.image}`}
+//           alt={`${team.name} logo`}
+//         />
+//       ) : (
+//         <div className="w-full h-full flex items-center justify-center bg-gray-700">
+//           <UserCircle className="w-16 h-16 sm:w-20 sm:h-20 text-gray-500" />
+//         </div>
+//       )}
+//       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
+//         <h5 className="text-lg sm:text-xl font-semibold text-white truncate">{team.name}</h5>
+//       </div>
+//     </div>
+//   </div>
+// );
 
-const AddTeamCard = ({ onClick }) => (
-  <div
-    role="button"
-    tabIndex={0}
-    onClick={onClick}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        onClick();
-      }
-    }}
-    className="group relative overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900
-               rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-[#aa2180]
-               hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-blue-500
-               cursor-pointer h-full aspect-video"
-  >
-    <div className="absolute inset-0 bg-[#aa2180] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-    <div className="h-full flex flex-col items-center justify-center p-4 gap-2 sm:gap-4">
-      <div className="rounded-full bg-gray-700/50 group-hover:bg-gray-500/20 transition-colors duration-300">
-        <PlusCircle className="w-8 h-8 sm:w-10 sm:h-10 text-[#aa2180]" />
-      </div>
-      <span className="text-sm sm:text-base text-gray-300 font-medium">
-        Ajouter une équipe
-      </span>
-    </div>
-  </div>
-);
+
 // SearchBar Component
 const SearchBar = ({ value, onChange }) => (
   <div className="relative w-full">
@@ -271,7 +247,7 @@ const TeamPage = () => {
           </h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <AddTeamCard onClick={handleAddTeam} />
+          <AddTeamCard onClick={handleAddTeam} />
             {myTeams.map((team) => (
               <TeamCard key={team.id} team={team} onClick={handleTeamClick} />
             ))}
@@ -331,13 +307,12 @@ const TeamPage = () => {
           )}
         </>
       )}
-
-      <CreateTeamForm
+     <CreateTeamForm
         isOpen={isCreateTeamOpen}
         onClose={() => setIsCreateTeamOpen(false)}
         onFinish={refreshTeams}
-        className="z-50"
       />
+    
     </div>
   </div>
   );

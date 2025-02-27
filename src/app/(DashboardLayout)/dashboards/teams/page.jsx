@@ -88,32 +88,6 @@ const useTeamsData = (userId) => {
 
   return { ...teamsData, refreshTeams: fetchTeams };
 };
-// Components
-// const TeamCard = ({ team, onClick }) => (
-//   <div
-//     className="bg-gray-800 rounded-lg shadow-md overflow-hidden cursor-pointer 
-//                transition-all duration-300 hover:-translate-y-1 h-full"
-//     onClick={() => onClick(team)}
-//   >
-//     <div className="relative aspect-video">
-//       {team.image ? (
-//         <img
-//           className="w-full h-full object-cover"
-//           src={`${BACKEND_URL}/${team.image}`}
-//           alt={`${team.name} logo`}
-//         />
-//       ) : (
-//         <div className="w-full h-full flex items-center justify-center bg-gray-700">
-//           <UserCircle className="w-16 h-16 sm:w-20 sm:h-20 text-gray-500" />
-//         </div>
-//       )}
-//       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-2 sm:p-4">
-//         <h5 className="text-lg sm:text-xl font-semibold text-white truncate">{team.name}</h5>
-//       </div>
-//     </div>
-//   </div>
-// );
-
 
 // SearchBar Component
 const SearchBar = ({ value, onChange }) => (
@@ -129,7 +103,6 @@ const SearchBar = ({ value, onChange }) => (
   </div>
 );
 
-
 // Main Component
 const TeamPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -138,8 +111,17 @@ const TeamPage = () => {
   const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
   const [activeSidebarTab, setActiveSidebarTab] = useState('overview');
   const { addToast } = useToast();
+  const [userId, setUserId] = useState(null);  // Add state for userId
 
-  const userId = parseInt(localStorage.getItem('userId'));
+  // Move localStorage to useEffect
+  useEffect(() => {
+    // Access localStorage only after component mounts (client-side)
+    const id = localStorage.getItem('userId');
+    if (id) {
+      setUserId(parseInt(id));
+    }
+  }, []);
+
   const { allTeams, myTeams, isLoading, refreshTeams } = useTeamsData(userId);
 
   const handleTeamUpdate = useCallback(() => {
@@ -148,7 +130,12 @@ const TeamPage = () => {
 
   const handleAddTeam = () => {
     if (!userId) {
-      toast.error('Please login to create a team');
+      addToast({  // Changed from toast.error to addToast
+        type: 'error',
+        message: 'Please login to create a team',
+        duration: 5000,
+        position: 'bottom-right'
+      });
       return;
     }
     setIsCreateTeamOpen(true);
@@ -156,7 +143,12 @@ const TeamPage = () => {
 
   const handleJoinTeamRequest = async (teamId) => {
     if (!userId) {
-      toast.error('Please login to join a team');
+      addToast({  // Changed from toast.error to addToast
+        type: 'error',
+        message: 'Please login to join a team',
+        duration: 5000,
+        position: 'bottom-right'
+      });
       return;
     }
 
@@ -178,10 +170,10 @@ const TeamPage = () => {
 
       if (data.success) {
         addToast({
-          type: 'success', // 'success' | 'error' | 'warning' | 'info'
+          type: 'success',
           message: 'Join request sent successfully!',
-          duration: 5000, // optional, in ms
-          position: 'bottom-right', // optional
+          duration: 5000,
+          position: 'bottom-right',
         });
         setSidebarOpen(false);
       } else {
@@ -190,10 +182,10 @@ const TeamPage = () => {
     } catch (error) {
       console.error('Error sending join request:', error);
       addToast({
-        type: 'error', // 'success' | 'error' | 'warning' | 'info'
+        type: 'error',
         message: error.message,
-        duration: 5000, // optional, in ms
-        position: 'bottom-right', // optional
+        duration: 5000,
+        position: 'bottom-right',
       });
     }
   };
@@ -230,91 +222,90 @@ const TeamPage = () => {
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
-    <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 lg:space-y-12">
-      {myTeams.length === 0 ? (
-        <div className="flex justify-center px-4">
-          <div className="w-full max-w-sm">
-            <AddTeamCard onClick={handleAddTeam} />
-          </div>
-        </div>
-      ) : (
-        <section className="space-y-4 sm:space-y-6">
-          <h3 className="text-4xl sm:text-5xl lg:text-6xl text-white tracking-wider font-custom 
-                       text-center sm:text-left leading-tight">
-            YOUR TEAM HEADQUARTERS
-            <br />
-            <span className="text-primary">UNITE AND TRIUMPH</span>
-          </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          <AddTeamCard onClick={handleAddTeam} />
-            {myTeams.map((team) => (
-              <TeamCard key={team.id} team={team} onClick={handleTeamClick} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="space-y-4 sm:space-y-6">
-        <h3 className="text-4xl sm:text-5xl lg:text-6xl text-white tracking-wider font-custom 
-                     text-center sm:text-left leading-tight">
-          TEAM ALLIANCE HUB
-          <br />
-          <span className="text-primary">CONNECT AND CONQUER</span>
-        </h3>
-
-        <div className="max-w-md w-full mx-auto sm:mx-0">
-          <SearchBar 
-            value={searchTerm} 
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        {filteredTeams.all.length === 0 ? (
-          <div className="text-center text-gray-400 py-8">
-            <p>Aucune équipe ne correspond à votre recherche.</p>
+      <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8 lg:space-y-12">
+        {myTeams.length === 0 ? (
+          <div className="flex justify-center px-4">
+            <div className="w-full max-w-sm">
+              <AddTeamCard onClick={handleAddTeam} />
+            </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredTeams.all.map((team) => (
-              <TeamCard key={team.id} team={team} onClick={handleTeamClick} />
-            ))}
-          </div>
+          <section className="space-y-4 sm:space-y-6">
+            <h3 className="text-4xl sm:text-5xl lg:text-6xl text-white tracking-wider font-custom 
+                        text-center sm:text-left leading-tight">
+              YOUR TEAM HEADQUARTERS
+              <br />
+              <span className="text-primary">UNITE AND TRIUMPH</span>
+            </h3>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <AddTeamCard onClick={handleAddTeam} />
+              {myTeams.map((team) => (
+                <TeamCard key={team.id} team={team} onClick={handleTeamClick} />
+              ))}
+            </div>
+          </section>
         )}
-      </section>
 
-      {selectedTeam && (
-        <>
-          {isTeamOwner(selectedTeam) ? (
-            <TeamSidebar
-              team={selectedTeam}
-              isOpen={sidebarOpen}
-              onClose={handleCloseSidebar}
-              activeTab={activeSidebarTab}
-              setActiveTab={setActiveSidebarTab}
-              onTeamUpdate={handleTeamUpdate}
-              currentUserId={userId}
-              className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md lg:max-w-lg"
+        <section className="space-y-4 sm:space-y-6">
+          <h3 className="text-4xl sm:text-5xl lg:text-6xl text-white tracking-wider font-custom 
+                      text-center sm:text-left leading-tight">
+            TEAM ALLIANCE HUB
+            <br />
+            <span className="text-primary">CONNECT AND CONQUER</span>
+          </h3>
+
+          <div className="max-w-md w-full mx-auto sm:mx-0">
+            <SearchBar 
+              value={searchTerm} 
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+
+          {filteredTeams.all.length === 0 ? (
+            <div className="text-center text-gray-400 py-8">
+              <p>Aucune équipe ne correspond à votre recherche.</p>
+            </div>
           ) : (
-            <NonOwnerView
-              team={selectedTeam}
-              isOpen={sidebarOpen}
-              onClose={handleCloseSidebar}
-              onJoinRequest={handleJoinTeamRequest}
-              className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md lg:max-w-lg"
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {filteredTeams.all.map((team) => (
+                <TeamCard key={team.id} team={team} onClick={handleTeamClick} />
+              ))}
+            </div>
           )}
-        </>
-      )}
-     <CreateTeamForm
-        isOpen={isCreateTeamOpen}
-        onClose={() => setIsCreateTeamOpen(false)}
-        onFinish={refreshTeams}
-      />
-    
+        </section>
+
+        {selectedTeam && (
+          <>
+            {isTeamOwner(selectedTeam) ? (
+              <TeamSidebar
+                team={selectedTeam}
+                isOpen={sidebarOpen}
+                onClose={handleCloseSidebar}
+                activeTab={activeSidebarTab}
+                setActiveTab={setActiveSidebarTab}
+                onTeamUpdate={handleTeamUpdate}
+                currentUserId={userId}
+                className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md lg:max-w-lg"
+              />
+            ) : (
+              <NonOwnerView
+                team={selectedTeam}
+                isOpen={sidebarOpen}
+                onClose={handleCloseSidebar}
+                onJoinRequest={handleJoinTeamRequest}
+                className="fixed inset-y-0 right-0 z-50 w-full sm:max-w-md lg:max-w-lg"
+              />
+            )}
+          </>
+        )}
+        <CreateTeamForm
+          isOpen={isCreateTeamOpen}
+          onClose={() => setIsCreateTeamOpen(false)}
+          onFinish={refreshTeams}
+        />
+      </div>
     </div>
-  </div>
   );
 };
 

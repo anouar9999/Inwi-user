@@ -14,27 +14,33 @@ const ParticipantTournaments = ({ participantId }) => {
   const [filteredTournaments, setFilteredTournaments] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const user_id = localStorage.getItem("userId")
+  const [userId, setUserId] = useState(null); // Add state for userId
+
   useEffect(() => {
-    console.log(user_id)
-    setIsLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/my-tournament.php?user_id=${user_id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          setTournaments(data.tournaments);
-          setFilteredTournaments([data.tournaments]);
-        } else {
-          setError(data.message || 'Échec de la récupération des tournois du participant');
-        }
-      })
-      .catch((error) => {
-        console.error('Erreur:', error);
-        setError('Une erreur est survenue lors de la récupération des tournois du participant');
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    // Access localStorage only after component mounts (client-side)
+    const user_id = localStorage.getItem("userId");
+    setUserId(user_id);
+    
+    if (user_id) {
+      setIsLoading(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/my-tournament.php?user_id=${user_id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            setTournaments(data.tournaments);
+            setFilteredTournaments([data.tournaments]);
+          } else {
+            setError(data.message || 'Échec de la récupération des tournois du participant');
+          }
+        })
+        .catch((error) => {
+          console.error('Erreur:', error);
+          setError('Une erreur est survenue lors de la récupération des tournois du participant');
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
   }, [participantId]);
 
   const filterOptions = {

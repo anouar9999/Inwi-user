@@ -6,8 +6,7 @@ import { Settings, Trophy, Users, Target, ArrowUp, Star, Shield, Mail, Calendar,
 
 const Profile = () => {
   const router = useRouter();
-  const id = localStorage.getItem('userId');
-
+  const [userId, setUserId] = useState(null);
   const [user, setUser] = useState({
     username: '',
     email: '',
@@ -22,21 +21,25 @@ const Profile = () => {
       team_participations: 0,
       total_participations: 0
     },
-  
   });
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Move localStorage to useEffect
   useEffect(() => {
-    if (id) fetchUserSettings();
-  }, [id]);
+    // Get userId from localStorage after component mounts (client-side only)
+    const id = localStorage.getItem('userId');
+    setUserId(id);
+    
+    if (id) fetchUserSettings(id);
+  }, []);
 
-  const fetchUserSettings = async () => {
+  const fetchUserSettings = async (id) => {
     try {
       setLoading(true);
       const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user_settings.php?id=${id}`);
-        console.log(response.data.data)
+      console.log(response.data.data);
       if (response.data) {
         setUser(prev => ({ ...prev, ...response.data.data }));
       }

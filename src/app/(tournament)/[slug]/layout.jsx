@@ -415,7 +415,7 @@ console.log('tournament',tournament)
         <div className="absolute top-0 left-0 right-0 h-1/3 z-0">
           {tournament && (
             <div className="relative w-full h-full">
-              <Image
+              <img
                 src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${tournament.image}`}
                 alt="Tournament Background"
                 fill

@@ -182,7 +182,7 @@ const TeamSidebar = ({ isOpen, onClose, team, onTeamUpdate  }) => {
       }
 
       setTeamStats(statsData.data);
-      setMembers(membersData.data);
+      setMembers(membersData.data.members);
       setRequests(requestsData.data);
       setTeamSettings(settingsData.data);
       setSettingsForm((prev) => ({
@@ -652,7 +652,7 @@ const TeamSidebar = ({ isOpen, onClose, team, onTeamUpdate  }) => {
                 </button>
                 <button
                   onClick={() => handleRequestAction(request.id, 'accept')}
-                  className="flex-1 sm:flex-initial px-3 md:px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
+                  className="flex-1 sm:flex-initial px-3 md:px-4 py-2 bg-green-500 hover:bg-green-800 text-green-950 rounded-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <Check className="w-4 h-4 md:w-5 md:h-5" />
                   <span className="text-sm md:text-base">Accept</span>
@@ -678,95 +678,95 @@ const TeamSidebar = ({ isOpen, onClose, team, onTeamUpdate  }) => {
   </div>
 )}
 </div>
-                {activeTab === 'settings' && (
-                <div className="space-y-4 md:space-y-6">
-                <div className="w-full max-w-2xl mx-auto space-y-6 md:space-y-8">
-                  <form onSubmit={handleSettingsSubmit} className="space-y-6 md:space-y-8">
-                        <div className="space-y-6">
-                          <div>
-                            <FloatingLabelInput
-                              label={'Team Name'}
-                              name={'team_name'}
-                              value={settingsForm.name}
-                              onChange={(e) =>
-                                setSettingsForm({ ...settingsForm, name: e.target.value })
-                              }
-                            />
-                          </div>
+{activeTab === 'settings' && (
+  <div className="space-y-4 md:space-y-6">
+    <div className="w-full mx-auto space-y-6 md:space-y-8">
+      <form onSubmit={handleSettingsSubmit} className="space-y-6 md:space-y-8">
+        <div className="space-y-6">
+          <div>
+            <FloatingLabelInput
+              label={'Team Name'}
+              name={'team_name'}
+              value={settingsForm.name}
+              onChange={(e) =>
+                setSettingsForm({ ...settingsForm, name: e.target.value })
+              }
+            />
+          </div>
 
-                          <div>
-                            <FloatingLabelTextArea
-                              label={'Team Description'}
-                              name={'team_description'}
-                              value={settingsForm.description}
-                              onChange={(e) =>
-                                setSettingsForm({ ...settingsForm, description: e.target.value })
-                              }
-                            />
-                          </div>
+          <div>
+            <FloatingLabelTextArea
+              label={'Team Description'}
+              name={'team_description'}
+              value={settingsForm.description}
+              onChange={(e) =>
+                setSettingsForm({ ...settingsForm, description: e.target.value })
+              }
+            />
+          </div>
 
-                          <div className="grid grid-cols-2 gap-6">
-                            <div>
-                              <FloatingSelectField
-                                label={'Privacy Level'}
-                                value={settingsForm.privacy_level}
-                                onChange={(e) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    privacy_level: e.target.value,
-                                  })
-                                }
-                                options={['Public', 'Private']}
-                              />
-                            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <FloatingSelectField
+                label={'Privacy Level'}
+                value={settingsForm.privacy_level}
+                onChange={(e) =>
+                  setSettingsForm({
+                    ...settingsForm,
+                    privacy_level: e.target.value,
+                  })
+                }
+                options={['Public', 'Private']}
+              />
+            </div>
 
-                            <div>
-                              <FloatingSelectField
-                                label={'Division'}
-                                value={settingsForm.privacy_level}
-                                onChange={(e) =>
-                                  setSettingsForm({
-                                    ...settingsForm,
-                                    privacy_level: e.target.value,
-                                  })
-                                }
-                                options={[
-                                  'Iron',
-                                  'Bronze',
-                                  'Silver',
-                                  'Gold',
-                                  'Platinum',
-                                  'Diamond',
-                                  'Master',
-                                  'Grandmaster',
-                                ]}
-                              />
-                            </div>
-                          </div>
+            <div>
+              <FloatingSelectField
+                label={'Division'}
+                value={settingsForm.division}
+                onChange={(e) =>
+                  setSettingsForm({
+                    ...settingsForm,
+                    division: e.target.value,
+                  })
+                }
+                options={[
+                  'Iron',
+                  'Bronze',
+                  'Silver',
+                  'Gold',
+                  'Platinum',
+                  'Diamond',
+                  'Master',
+                  'Grandmaster',
+                ]}
+              />
+            </div>
+          </div>
 
-                          <div className="flex justify-between pt-8 border-t border-gray-800">
-                            <button
-                              type="button"
-                              onClick={() => setShowDeleteConfirm(true)}
-                              className="px-5 py-3 bg-red-500/10 hover:bg-red-500/20 angular-cut text-red-400 transition-all hover:scale-105 flex items-center gap-2"
-                            >
-                              <Trash className="w-5 h-5" />
-                              <span>Delete Team</span>
-                            </button>
+          <div className="flex flex-col sm:flex-row justify-between gap-4 pt-8 border-t border-gray-800">
+            <button
+              type="button"
+              onClick={() => setShowDeleteConfirm(true)}
+              className="px-5 py-3 bg-red-500/10 hover:bg-red-500/20 angular-cut text-red-400 transition-all hover:scale-105 flex items-center justify-center gap-2"
+            >
+              <Trash className="w-5 h-5" />
+              <span>Delete Team</span>
+            </button>
 
-                            <button
-                              type="submit"
-                              className="px-6 py-3 bg-gradient-to-r from-primary/50 to-primary/60 hover:from-primary/60 hover:to-primary/70 angular-cut text-white flex items-center gap-2 transition-all hover:scale-105 shadow-lg shadow-purple-500/25"
-                            >
-                              <Save size={20} />
-                              <span>Save Changes</span>
-                            </button>
-                          </div>
-                        </div>
-                      </form>
-                    </div>{' '}
-                  </div>
-                )}
+            <button
+              type="submit"
+              className="px-6 py-3 bg-gradient-to-r from-primary/50 to-primary/60 hover:from-primary/60 hover:to-primary/70 angular-cut text-white flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-lg shadow-purple-500/25"
+            >
+              <Save size={20} />
+              <span>Save Changes</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
               </div>
             </div>
           </div>

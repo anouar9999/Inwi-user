@@ -264,10 +264,10 @@ const handleFileChange = (event, setFieldValue) => {
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
         >
-          <source src="/videos/videoplayback.mp4" type="video/mp4" />
+          <source src="/videos/hero-1.mp4" type="video/mp4" />
         </video>
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-bl from-gray-900/95 via-gray-900/80 to-gray-950"></div>
+        <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-gray-900/80 to-transparent"></div>
         <div
           className={`absolute inset-0 bg-gradient-to-l from-gray-900/95 via-gray-900 to-transparent`}
         ></div>

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Settings, Home, Users, ChevronRight, Gamepad2, X, Gamepad, Users2 } from 'lucide-react';
+import { Settings, Home, Users, ChevronRight, Gamepad2, X, Gamepad, Users2, HeartPulse, TicketCheck } from 'lucide-react';
 import CustomButton from '@/app/(DashboardLayout)/CustomButton';
 import Profile from '@/app/(DashboardLayout)/dashboards/settings/page';
 import ProfileDropdown from '../header/Profile';
@@ -13,8 +13,9 @@ const menuItems = [
   { id: 1, icon: Gamepad2, name: 'Tournaments', href: '/dashboards/tournaments' },
   { id: 2, icon: Gamepad, name: 'My Tournament', href: '/dashboards/my-tournaments' },
   { id: 3, icon: Users2, name: 'teams', href: '/dashboards/teams' },
-
   { id: 4, icon: Settings, name: 'Settings', href: '/dashboards/settings' },
+  // { id: 5, icon: HeartPulse , name: 'Santé', href: '/dashboards/sante' },
+  { id: 5, icon: TicketCheck , name: 'Pass Gamers', href: '/dashboards/pass-gamers' },
 ];
 
 const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {

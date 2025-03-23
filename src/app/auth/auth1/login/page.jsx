@@ -291,16 +291,16 @@ const handleFileChange = (event, setFieldValue) => {
           </div>
 
           <h1 className="font-custom tracking-widest text-5xl font-bold text-white leading-tight">
-            Unleash the traveler
+        Unleash Your Competitive  Spirit at  <br />
+            <span className="text-primary">MGE 2025!</span>
             <br />
-            <span className="text-primary">inside you</span>, Enjoy your
-            <br />
-            Dream Vacation
+
+           
+           
           </h1>
 
           <p className="text-gray-300 text-sm max-w-md">
-            Get started with the easiest and most secure website to buy travel tickets
-          </p>
+          Join the ultimate esports event in Morocco. Battle top contenders and write your name in gaming history.          </p>
         </div>
       </div>
 
@@ -335,9 +335,8 @@ const handleFileChange = (event, setFieldValue) => {
                 Join us now
               </h2>
             )}
-            <p className="text-gray-500 text-sm sm:text-sm">
-              Get started with the easiest and most secure website to buy travel tickets
-            </p>
+            <p className="text-gray-500 text-sm sm:text-sm w-full">
+            Connect now… and remember: your well-being is the key to success.</p>
           </div>
 
           <Formik
@@ -538,3 +537,4 @@ const handleFileChange = (event, setFieldValue) => {
     </div>
   );
 }
+
